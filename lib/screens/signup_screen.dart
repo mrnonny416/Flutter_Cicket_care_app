@@ -1,3 +1,4 @@
+import 'package:cickets_app/screens/signin_screen.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:cickets_app/theme/theme.dart';
@@ -258,6 +259,12 @@ class _SignInScreenState extends State<SignUpScreen> {
                                       const SnackBar(
                                           content:
                                               Text('User Register Success')),
+                                    );
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (e) => const SignInScreen(),
+                                      ),
                                     );
                                   } else {
                                     if (!insert) {
