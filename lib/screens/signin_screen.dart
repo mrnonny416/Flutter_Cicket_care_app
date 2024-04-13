@@ -17,6 +17,7 @@ DatabaseReference databaseReference = FirebaseDatabase.instance.ref();
 
 class _SignInScreenState extends State<SignInScreen> {
   String username = '';
+  String password = "";
   bool validateUsername = false;
   final _formSignInKey = GlobalKey<FormState>();
   bool rememberPassword = true;
@@ -102,6 +103,11 @@ class _SignInScreenState extends State<SignInScreen> {
                         }
                         return null;
                       },
+                      onChanged: (String? value) => {
+                        setState(() {
+                          password = value.toString();
+                        })
+                      },
                       decoration: InputDecoration(
                         label: const Text('Password'),
                         hintText: 'Enter Password',
@@ -147,15 +153,6 @@ class _SignInScreenState extends State<SignInScreen> {
                             ),
                           ],
                         ),
-                        GestureDetector(
-                          child: Text(
-                            'Forget password?',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: lightColorScheme.primary,
-                            ),
-                          ),
-                        ),
                       ],
                     ),
                     const SizedBox(
@@ -167,38 +164,49 @@ class _SignInScreenState extends State<SignInScreen> {
                         onPressed: () {
                           if (_formSignInKey.currentState!.validate() &&
                               rememberPassword) {
-                            String path = username;
-
-                            databaseReference
-                                .child(path)
-                                .onValue
-                                .listen((event) {
-                              Map<dynamic, dynamic>? usernameObject = event
-                                  .snapshot.value as Map<dynamic, dynamic>?;
-                              developer.log(usernameObject.toString());
-                              setState(() {
-                                if (usernameObject.toString() != 'null') {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text(
-                                        'Processing Data',
+                            String sanitizedUsername =
+                                username.replaceAll(RegExp(r'[.#$\[\]]'), '');
+                            String path = sanitizedUsername;
+                            if (RegExp(
+                                    r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                .hasMatch(username)) {
+                              databaseReference
+                                  .child(path)
+                                  .onValue
+                                  .listen((event) {
+                                Map<dynamic, dynamic>? usernameObject = event
+                                    .snapshot.value as Map<dynamic, dynamic>?;
+                                developer.log(usernameObject.toString());
+                                setState(() {
+                                  if (usernameObject.toString() != 'null' &&
+                                      usernameObject!['password'] == password) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                          'Login Success',
+                                        ),
                                       ),
-                                    ),
-                                  );
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            scrollPage(username: username)),
-                                  );
-                                } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                        content: Text('Invalid Username')),
-                                  );
-                                }
+                                    );
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              scrollPage(username: path)),
+                                    );
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content: Text('Invalid Username')),
+                                    );
+                                  }
+                                });
                               });
-                            });
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text('Please Fill Email Format')),
+                              );
+                            }
                           } else if (!rememberPassword) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(

@@ -1,6 +1,8 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:cickets_app/theme/theme.dart';
 import 'package:cickets_app/widgets/custom_scaffold.dart';
+import 'dart:developer' as developer;
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -9,7 +11,12 @@ class SignUpScreen extends StatefulWidget {
   State<SignUpScreen> createState() => _SignInScreenState();
 }
 
+DatabaseReference databaseReference = FirebaseDatabase.instance.ref();
+
 class _SignInScreenState extends State<SignUpScreen> {
+  String username = "";
+  String password = "";
+  String fullName = "";
   final _formSignupKey = GlobalKey<FormState>();
   bool agreePersonalData = true;
   @override
@@ -61,6 +68,11 @@ class _SignInScreenState extends State<SignUpScreen> {
                           }
                           return null;
                         },
+                        onChanged: (String? value) => {
+                          setState(() {
+                            fullName = value.toString();
+                          })
+                        },
                         decoration: InputDecoration(
                           label: const Text('Full Name'),
                           hintText: 'Enter Full Name',
@@ -91,6 +103,11 @@ class _SignInScreenState extends State<SignUpScreen> {
                             return 'Please enter Email';
                           }
                           return null;
+                        },
+                        onChanged: (String? value) => {
+                          setState(() {
+                            username = value.toString();
+                          })
                         },
                         decoration: InputDecoration(
                           label: const Text('Email'),
@@ -124,6 +141,11 @@ class _SignInScreenState extends State<SignUpScreen> {
                             return 'Please enter Password';
                           }
                           return null;
+                        },
+                        onChanged: (String? value) => {
+                          setState(() {
+                            password = value.toString();
+                          })
                         },
                         decoration: InputDecoration(
                           label: const Text('Password'),
@@ -178,20 +200,69 @@ class _SignInScreenState extends State<SignUpScreen> {
                       const SizedBox(
                         height: 25.0,
                       ),
-                      // signup button
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: () {
                             if (_formSignupKey.currentState!.validate() &&
                                 agreePersonalData) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text(
-                                    'Processing Data',
-                                  ),
-                                ),
-                              );
+                              if (RegExp(
+                                      r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                  .hasMatch(username)) {
+                                String sanitizedUsername = username.replaceAll(
+                                    RegExp(r'[.#$\[\]]'), '');
+                                databaseReference
+                                    .child(sanitizedUsername)
+                                    .onValue
+                                    .listen((event) async {
+                                  Map<dynamic, dynamic>? usernameObject = event
+                                      .snapshot.value as Map<dynamic, dynamic>?;
+                                  if (usernameObject.toString() == 'null') {
+                                    developer.log(sanitizedUsername);
+                                    await databaseReference
+                                        .child(sanitizedUsername)
+                                        .set({
+                                      'full_name': fullName.toString(),
+                                      'password': password.toString(),
+                                      'controller': {
+                                        'food_control': {
+                                          'control': false,
+                                          'sensor': 0,
+                                          'setting': 0
+                                        },
+                                        'water_control': {
+                                          'control': false,
+                                          'sensor': 0,
+                                          'setting': 0
+                                        },
+                                        'humidity': {
+                                          'control': false,
+                                          'sensor': 0,
+                                          'setting': 0
+                                        },
+                                        'temperature': {
+                                          'control': false,
+                                          'sensor': 0,
+                                          'setting': 0
+                                        },
+                                        'report': "",
+                                      }
+                                    });
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content:
+                                              Text('Username Is duplicate')),
+                                    );
+                                  }
+                                });
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content:
+                                          Text('Please Fill Email Format')),
+                                );
+                              }
                             } else if (!agreePersonalData) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
