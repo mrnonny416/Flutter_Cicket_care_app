@@ -17,6 +17,7 @@ class _SignInScreenState extends State<SignUpScreen> {
   String username = "";
   String password = "";
   String fullName = "";
+  bool insert = false;
   final _formSignupKey = GlobalKey<FormState>();
   bool agreePersonalData = true;
   @override
@@ -207,7 +208,7 @@ class _SignInScreenState extends State<SignUpScreen> {
                             if (_formSignupKey.currentState!.validate() &&
                                 agreePersonalData) {
                               if (RegExp(
-                                      r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                      r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[gmail]+\.[com]+")
                                   .hasMatch(username)) {
                                 String sanitizedUsername = username.replaceAll(
                                     RegExp(r'[.#$\[\]]'), '');
@@ -217,7 +218,12 @@ class _SignInScreenState extends State<SignUpScreen> {
                                     .listen((event) async {
                                   Map<dynamic, dynamic>? usernameObject = event
                                       .snapshot.value as Map<dynamic, dynamic>?;
+                                  developer.log(usernameObject.toString());
                                   if (usernameObject.toString() == 'null') {
+                                    setState(() {
+                                      insert = true;
+                                    });
+                                    developer.log('insert');
                                     developer.log(sanitizedUsername);
                                     await databaseReference
                                         .child(sanitizedUsername)
@@ -248,12 +254,24 @@ class _SignInScreenState extends State<SignUpScreen> {
                                         'report': "",
                                       }
                                     });
-                                  } else {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
                                           content:
-                                              Text('Username Is duplicate')),
+                                              Text('User Register Success')),
                                     );
+                                  } else {
+                                    if (!insert) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                            content:
+                                                Text('Username Is duplicate')),
+                                      );
+                                    } else {
+                                      setState(() {
+                                        insert = !insert;
+                                      });
+                                    }
                                   }
                                 });
                               } else {
