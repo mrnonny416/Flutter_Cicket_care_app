@@ -2,15 +2,43 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cickets_app/screens/signin_screen.dart';
 import 'package:cickets_app/screens/signup_screen.dart';
 import 'package:cickets_app/widgets/custom_scaffold.dart';
 import 'package:cickets_app/widgets/welcome_button.dart';
+import 'dart:developer' as developer;
 
-class WelcomeScreen extends StatelessWidget {
+class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
-
   @override
+  State<WelcomeScreen> createState() => _WelcomeScreen();
+}
+
+class _WelcomeScreen extends State<WelcomeScreen> {
+  String _username = "";
+  @override
+  void initState() {
+    super.initState();
+    _loadUsername();
+  }
+
+  Future<void> _loadUsername() async {
+    final localStorage = await SharedPreferences.getInstance();
+    setState(() {
+      _username = localStorage.getString('username') ?? "";
+    });
+    developer.log("username : $_username");
+    if (_username != "") {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (e) => const SignInScreen(),
+        ),
+      );
+    }
+  }
+
   Widget build(BuildContext context) {
     return CustomScaffold(
       child: Column(

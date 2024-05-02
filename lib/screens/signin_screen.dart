@@ -1,4 +1,5 @@
 import 'package:cickets_app/scroll_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:cickets_app/screens/signup_screen.dart';
@@ -16,17 +17,65 @@ class SignInScreen extends StatefulWidget {
 DatabaseReference databaseReference = FirebaseDatabase.instance.ref();
 
 class _SignInScreenState extends State<SignInScreen> {
+  String _username = "";
+  String _password = "";
   String username = '';
   String password = "";
+  String fullName = "";
   bool validateUsername = false;
   final _formSignInKey = GlobalKey<FormState>();
   bool rememberPassword = true;
   @override
+  void initState() {
+    super.initState();
+    _loadUsername();
+  }
+
+  Future<void> _loadUsername() async {
+    final localStorage = await SharedPreferences.getInstance();
+    setState(() {
+      _username = localStorage.getString('username') ?? "";
+      _password = localStorage.getString('password') ?? "";
+    });
+    if (_username != "" && _password != "") {
+      String sanitizedUsername = _username.replaceAll(RegExp(r'[.#$\[\]]'), '');
+      String path = sanitizedUsername;
+      if (RegExp(
+              r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+          .hasMatch(_username)) {
+        databaseReference.child(path).onValue.listen((event) {
+          Map<dynamic, dynamic>? usernameObject =
+              event.snapshot.value as Map<dynamic, dynamic>?;
+          developer.log(usernameObject.toString());
+          setState(() {
+            if (usernameObject.toString() != 'null' &&
+                usernameObject!['password'] == _password) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => scrollPage(username: path)),
+              );
+            }
+          });
+        });
+      }
+    }
+  }
+
+  Future<void> _setUsername() async {
+    final localStorage = await SharedPreferences.getInstance();
+    setState(() {
+      localStorage.setString('username', username);
+      localStorage.setString('password', password);
+      localStorage.setString('fullName', fullName);
+    });
+  }
+
   Widget build(BuildContext context) {
     return CustomScaffold(
         child: Column(
       children: [
-        Expanded(
+        const Expanded(
           flex: 1,
           child: SizedBox(
             height: 10,
@@ -180,6 +229,9 @@ class _SignInScreenState extends State<SignInScreen> {
                                 setState(() {
                                   if (usernameObject.toString() != 'null' &&
                                       usernameObject!['password'] == password) {
+                                    setState(() {
+                                      fullName = usernameObject["full_name"];
+                                    });
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
                                         content: Text(
@@ -187,6 +239,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                         ),
                                       ),
                                     );
+                                    _setUsername();
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(

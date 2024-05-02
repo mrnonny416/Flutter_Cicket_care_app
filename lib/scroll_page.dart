@@ -6,6 +6,7 @@ import 'package:cickets_app/pages/page4.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class scrollPage extends StatefulWidget {
   final String username;
@@ -17,8 +18,29 @@ class scrollPage extends StatefulWidget {
 
 class _scrollPage extends State<scrollPage> {
   final _controller = PageController();
-
+  String _fullName = "";
   @override
+  void initState() {
+    super.initState();
+    _loadUsername();
+  }
+
+  Future<void> _loadUsername() async {
+    final localStorage = await SharedPreferences.getInstance();
+    setState(() {
+      _fullName = localStorage.getString('fullName') ?? "";
+    });
+  }
+
+  Future<void> _removeUsername() async {
+    final localStorage = await SharedPreferences.getInstance();
+
+    await localStorage.remove('fullName');
+    await localStorage.remove('username');
+    await localStorage.remove('password');
+    Navigator.pop(context);
+  }
+
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
     return Scaffold(
@@ -52,12 +74,14 @@ class _scrollPage extends State<scrollPage> {
                         borderRadius: BorderRadius.circular(10.0),
                       ),
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      _removeUsername();
+                    },
                     icon:
                         const Icon(CupertinoIcons.person_crop_square, size: 40),
-                    label: const Text(
-                      "USER",
-                      style: TextStyle(fontSize: 20),
+                    label: Text(
+                      "${_fullName}:logout",
+                      style: TextStyle(fontSize: 15),
                     ),
                   )
                 ],
