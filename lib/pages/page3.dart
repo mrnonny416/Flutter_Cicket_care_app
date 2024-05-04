@@ -13,8 +13,11 @@ class Page3 extends StatefulWidget {
 DatabaseReference databaseReference = FirebaseDatabase.instance.ref();
 
 class _Page3 extends State<Page3> {
-  final waterObject = ValueNotifier<Map<dynamic, dynamic>?>(
-      {'control': false, 'sensor': 0, 'setting': 0});
+  Map<dynamic, dynamic>? waterObject = {
+    'control': false,
+    'sensor': 0,
+    'setting': 0
+  };
   Map<dynamic, dynamic>? foodObject = {
     'control': false,
     'sensor': 0,
@@ -39,39 +42,41 @@ class _Page3 extends State<Page3> {
         .onValue
         .listen((event) {
       if (event.snapshot.value.toString() != 'null') {
-        waterObject.value = event.snapshot.value as Map<dynamic, dynamic>?;
+        setState(() {
+          waterObject = event.snapshot.value as Map<dynamic, dynamic>?;
+        });
       }
     });
-    // databaseReference
-    //     .child("${widget.username}/controller/food_control")
-    //     .onValue
-    //     .listen((event) {
-    //   if (event.snapshot.value.toString() != 'null') {
-    //     setState(() {
-    //       foodObject = event.snapshot.value as Map<dynamic, dynamic>?;
-    //     });
-    //   }
-    // });
-    // databaseReference
-    //     .child("${widget.username}/controller/temperature")
-    //     .onValue
-    //     .listen((event) {
-    //   if (event.snapshot.value.toString() != 'null') {
-    //     setState(() {
-    //       tempObject = event.snapshot.value as Map<dynamic, dynamic>?;
-    //     });
-    //   }
-    // });
-    // databaseReference
-    //     .child("${widget.username}/controller/humidity")
-    //     .onValue
-    //     .listen((event) {
-    //   if (event.snapshot.value.toString() != 'null') {
-    //     setState(() {
-    //       humidityObject = event.snapshot.value as Map<dynamic, dynamic>?;
-    //     });
-    //   }
-    // });
+    databaseReference
+        .child("${widget.username}/controller/food_control")
+        .onValue
+        .listen((event) {
+      if (event.snapshot.value.toString() != 'null') {
+        setState(() {
+          foodObject = event.snapshot.value as Map<dynamic, dynamic>?;
+        });
+      }
+    });
+    databaseReference
+        .child("${widget.username}/controller/temperature")
+        .onValue
+        .listen((event) {
+      if (event.snapshot.value.toString() != 'null') {
+        setState(() {
+          tempObject = event.snapshot.value as Map<dynamic, dynamic>?;
+        });
+      }
+    });
+    databaseReference
+        .child("${widget.username}/controller/humidity")
+        .onValue
+        .listen((event) {
+      if (event.snapshot.value.toString() != 'null') {
+        setState(() {
+          humidityObject = event.snapshot.value as Map<dynamic, dynamic>?;
+        });
+      }
+    });
   }
 
   @override
@@ -103,14 +108,14 @@ class _Page3 extends State<Page3> {
                   color: Colors.white,
                 ),
               ),
-              buildSettingRow(Icons.water_drop_rounded,
-                  waterObject.value!['control'], "water"),
               buildSettingRow(
-                  Icons.food_bank_outlined, foodObject!['control'], "food"),
+                  Icons.water_drop_rounded, waterObject!['control'], "water"),
               buildSettingRow(
                   Icons.wind_power, tempObject!['control'], "temperature"),
               buildSettingRow(CupertinoIcons.lightbulb,
                   humidityObject!['control'], "humidity"),
+              buildSettingRow(
+                  Icons.food_bank_outlined, foodObject!['control'], "food"),
             ],
           ),
         ),
@@ -153,10 +158,10 @@ class _Page3 extends State<Page3> {
                       await databaseReference
                           .child('${widget.username}/controller/water_control')
                           .update({
-                        'control': waterObject.value!['sensor'] <
-                                waterObject.value!['setting']
-                            ? !waterObject.value!['control']
-                            : false,
+                        'control':
+                            waterObject!['sensor'] < waterObject!['setting']
+                                ? !waterObject!['control']
+                                : false,
                       });
                       break; //จบ
                     case "food":

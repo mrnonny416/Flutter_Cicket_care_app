@@ -43,21 +43,10 @@ class _SignInScreenState extends State<SignInScreen> {
       if (RegExp(
               r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
           .hasMatch(_username)) {
-        databaseReference.child(path).onValue.listen((event) {
-          Map<dynamic, dynamic>? usernameObject =
-              event.snapshot.value as Map<dynamic, dynamic>?;
-          developer.log(usernameObject.toString());
-          setState(() {
-            if (usernameObject.toString() != 'null' &&
-                usernameObject!['password'] == _password) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => scrollPage(username: path)),
-              );
-            }
-          });
-        });
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => scrollPage(username: path)),
+        );
       }
     }
   }
@@ -221,10 +210,10 @@ class _SignInScreenState extends State<SignInScreen> {
                                 .hasMatch(username)) {
                               databaseReference
                                   .child(path)
-                                  .onValue
-                                  .listen((event) {
-                                Map<dynamic, dynamic>? usernameObject = event
-                                    .snapshot.value as Map<dynamic, dynamic>?;
+                                  .get()
+                                  .then((snapshot) {
+                                Map<dynamic, dynamic>? usernameObject =
+                                    snapshot.value as Map<dynamic, dynamic>?;
                                 developer.log(usernameObject.toString());
                                 setState(() {
                                   if (usernameObject.toString() != 'null' &&

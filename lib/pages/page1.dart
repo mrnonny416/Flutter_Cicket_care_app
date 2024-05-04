@@ -369,7 +369,7 @@ class _Page1 extends State<Page1> {
                                             const TextStyle(fontSize: 20)),
                                   ),
                                 ),
-                                const Text("G.")
+                                const Text("%")
                               ],
                             ),
                           ),
@@ -387,8 +387,12 @@ class _Page1 extends State<Page1> {
                                       .child(
                                           '${widget.username}/controller/food_control')
                                       .update({
-                                      'setting': int.parse(
-                                          foodController.text.toString()),
+                                      'setting': int.parse(foodController.text
+                                                  .toString()) >
+                                              100
+                                          ? 100
+                                          : int.parse(
+                                              foodController.text.toString()),
                                     })
                                   : "";
                               foodController.clear();
