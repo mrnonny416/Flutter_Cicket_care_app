@@ -5,7 +5,6 @@ import 'package:cickets_app/pages/page3.dart';
 import 'package:cickets_app/pages/page4.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:cickets_app/theme/theme.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -71,7 +70,7 @@ class _scrollPage extends State<scrollPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const Text(
-                        "ระบบเลี้ยงจิ้งหลีด",
+                        "ระบบเลี้ยงจิ้งหรีด",
                         style: TextStyle(
                           fontSize: 20.0,
                           fontWeight: FontWeight.w900,
@@ -93,8 +92,8 @@ class _scrollPage extends State<scrollPage> {
                         icon: const Icon(CupertinoIcons.person_crop_square,
                             size: 40),
                         label: Text(
-                          "${_fullName}:logout",
-                          style: TextStyle(fontSize: 15),
+                          "$_fullName:logout",
+                          style: const TextStyle(fontSize: 15),
                         ),
                       )
                     ],
@@ -124,7 +123,7 @@ class _scrollPage extends State<scrollPage> {
                 child: SmoothPageIndicator(
                   controller: _controller,
                   count: 4,
-                  effect: ExpandingDotsEffect(
+                  effect: const ExpandingDotsEffect(
                     activeDotColor: Color.fromARGB(255, 255, 255, 255),
                     dotColor: Color.fromARGB(255, 255, 255, 255),
                     dotHeight: 15,

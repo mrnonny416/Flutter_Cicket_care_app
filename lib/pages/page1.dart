@@ -127,7 +127,7 @@ class _Page1 extends State<Page1> {
                                 style: TextStyle(
                                   fontSize: 20.0,
                                   fontWeight: FontWeight.w900,
-                                  color: Color.fromARGB(255, 65, 111, 223),
+                                  color: Color.fromARGB(255, 0, 0, 0),
                                 ),
                               ),
                             ],
@@ -308,7 +308,7 @@ class _Page1 extends State<Page1> {
                                 style: TextStyle(
                                   fontSize: 20.0,
                                   fontWeight: FontWeight.w900,
-                                  color: Color.fromARGB(255, 65, 111, 223),
+                                  color: Color.fromARGB(255, 0, 0, 0),
                                 ),
                               ),
                             ],
