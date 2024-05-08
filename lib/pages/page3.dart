@@ -87,38 +87,58 @@ class _Page3 extends State<Page3> {
       backgroundColor: Colors.transparent,
       body: Center(
         child: Container(
-          padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-          width: screenSize.width * 0.9,
-          height: screenSize.height * 0.8,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: const Color.fromARGB(255, 126, 87, 194),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              const SizedBox(
-                height: 30,
-              ),
-              const Text(
-                'ตั้งค่าการใช้งาน',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+            padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+            width: screenSize.width * 0.9,
+            height: screenSize.height * 0.8,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: const Color.fromRGBO(255, 191, 0, 0.549),
+            ),
+            child: Column(
+              children: [
+                const Text(
+                  'ตั้งค่าการใช้งาน',
+                  style: TextStyle(
+                    fontSize: 30.0,
+                    fontWeight: FontWeight.w900,
+                    color: Color.fromARGB(255, 255, 255, 255),
+                    shadows: [
+                      Shadow(
+                        color: Color.fromARGB(
+                            255, 0, 68, 255), // Choose the color of the shadow
+                        blurRadius:
+                            2.0, // Adjust the blur radius for the shadow effect
+                        offset: Offset(2.0,
+                            2.0), // Set the horizontal and vertical offset for the shadow
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              buildSettingRow(
-                  Icons.water_drop_rounded, waterObject!['control'], "water"),
-              buildSettingRow(
-                  Icons.wind_power, tempObject!['control'], "temperature"),
-              buildSettingRow(CupertinoIcons.lightbulb,
-                  humidityObject!['control'], "humidity"),
-              buildSettingRow(
-                  Icons.food_bank_outlined, foodObject!['control'], "food"),
-            ],
-          ),
-        ),
+                Container(
+                  padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                  margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
+                  width: screenSize.width * 0.8,
+                  height: screenSize.height * 0.8 * 0.55,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Color.fromARGB(255, 255, 255, 255),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      buildSettingRow(Icons.water_drop_rounded,
+                          waterObject!['control'], "water"),
+                      buildSettingRow(Icons.food_bank_outlined,
+                          foodObject!['control'], "food"),
+                      buildSettingRow(CupertinoIcons.thermometer,
+                          tempObject!['control'], "temperature"),
+                      buildSettingRow(CupertinoIcons.snow,
+                          humidityObject!['control'], "humidity"),
+                    ],
+                  ),
+                )
+              ],
+            )),
       ),
     );
   }
@@ -127,22 +147,22 @@ class _Page3 extends State<Page3> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Row(
             children: [
               Icon(
                 icon,
                 color: _getIconColor(type),
-                size: 80.0,
+                size: 70.0,
               ),
               const SizedBox(width: 10),
               Text(
-                type,
+                type.toUpperCase(),
                 style: const TextStyle(
                   color: Color.fromARGB(255, 17, 4, 39),
-                  fontSize: 24.0,
-                  fontWeight: FontWeight.bold,
+                  fontSize: 15.0,
+                  fontWeight: FontWeight.w900,
                 ),
               ),
             ],
@@ -151,6 +171,9 @@ class _Page3 extends State<Page3> {
             children: [
               const Text('ปิด'),
               Switch(
+                activeColor: Color.fromARGB(255, 255, 170, 0),
+                inactiveTrackColor: Color.fromARGB(255, 165, 139, 88),
+                inactiveThumbColor: Color.fromARGB(255, 255, 170, 0),
                 value: value,
                 onChanged: (value) async {
                   switch (type) {
@@ -213,9 +236,9 @@ class _Page3 extends State<Page3> {
       case 'temperature':
         return const Color.fromARGB(255, 226, 117, 15);
       case 'food':
-        return const Color.fromARGB(255, 126, 110, 6);
+        return Color.fromARGB(255, 47, 192, 83);
       case 'humidity':
-        return const Color.fromARGB(255, 233, 236, 15);
+        return Color.fromARGB(255, 13, 152, 238);
       default:
         return Colors.black;
     }

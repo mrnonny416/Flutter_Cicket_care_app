@@ -37,61 +37,86 @@ class _Page4 extends State<Page4> {
           height: screenSize.height * 0.8,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
-            color: const Color.fromARGB(255, 126, 87, 194),
+            color: const Color.fromRGBO(255, 191, 0, 0.549),
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               const Text(
-                'Daily Report',
+                'รายงานผลประจำวัน',
                 style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  fontSize: 30.0,
+                  fontWeight: FontWeight.w900,
+                  color: Color.fromARGB(255, 255, 255, 255),
+                  shadows: [
+                    Shadow(
+                      color: Color.fromARGB(
+                          255, 0, 68, 255), // Choose the color of the shadow
+                      blurRadius:
+                          2.0, // Adjust the blur radius for the shadow effect
+                      offset: Offset(2.0,
+                          2.0), // Set the horizontal and vertical offset for the shadow
+                    ),
+                  ],
                 ),
               ),
-              ElevatedButton(
-                onPressed: () {
-                  _buildDatePicker(context);
-                },
-                child: Text(
-                  'Selected Date: ${selectedDate.day}/${selectedDate.month}/${selectedDate.year}',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    color: Color.fromARGB(255, 0, 0, 0),
-                  ),
+              Container(
+                width: screenSize.width * 0.8,
+                height: screenSize.height * 0.3,
+                padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+                margin: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: const Color.fromARGB(255, 255, 255, 255),
                 ),
-              ),
-              Text(
-                "water $waterReportCount",
-                style: const TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-              Text(
-                "food $foodReportCount",
-                style: const TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-              Text(
-                "temperature $tempReportCount",
-                style: const TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-              Text(
-                "humidity $humidityReportCount",
-                style: const TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        _buildDatePicker(context);
+                      },
+                      child: Text(
+                        'Selected Date: ${selectedDate.day}/${selectedDate.month}/${selectedDate.year}',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Color.fromARGB(255, 0, 0, 0),
+                        ),
+                      ),
+                    ),
+                    Text(
+                      "WATER : $waterReportCount Time",
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Color.fromARGB(255, 0, 0, 0),
+                      ),
+                    ),
+                    Text(
+                      "FOOD : $foodReportCount TIME",
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Color.fromARGB(255, 0, 0, 0),
+                      ),
+                    ),
+                    Text(
+                      "TEMPERATURE FAN : $tempReportCount TIME",
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Color.fromARGB(255, 15, 15, 15),
+                      ),
+                    ),
+                    Text(
+                      "HUMIDITY FAN : $humidityReportCount TIME",
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Color.fromARGB(255, 0, 0, 0),
+                      ),
+                    )
+                  ],
                 ),
               )
             ],
@@ -102,7 +127,7 @@ class _Page4 extends State<Page4> {
   void _buildDatePicker(BuildContext context) {
     BottomPicker.date(
       pickerTitle: const Text(
-        'Set your Birthday',
+        'Set Date',
         style: TextStyle(
           fontWeight: FontWeight.bold,
           fontSize: 15,

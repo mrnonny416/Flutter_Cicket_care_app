@@ -54,24 +54,34 @@ class _Page2 extends State<Page2> {
           height: screenSize.height * 0.8,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
-            color: const Color.fromARGB(255, 126, 87, 194),
+            color: const Color.fromRGBO(255, 191, 0, 0.549),
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Container(
                 width: screenSize.width,
-                height: screenSize.height * 0.8 * 0.05,
+                height: screenSize.height * 0.8 * 0.06,
                 padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                margin: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                margin: const EdgeInsets.fromLTRB(0, 10, 0, 0),
                 color: const Color.fromRGBO(3, 250, 250, 0),
                 child: const Text(
                   "อุณหภูมิ & ความชื้น",
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 24.0,
-                    fontWeight: FontWeight.bold,
+                    fontSize: 30.0,
+                    fontWeight: FontWeight.w900,
+                    color: Color.fromARGB(255, 255, 255, 255),
+                    shadows: [
+                      Shadow(
+                        color: Color.fromARGB(
+                            255, 0, 68, 255), // Choose the color of the shadow
+                        blurRadius:
+                            2.0, // Adjust the blur radius for the shadow effect
+                        offset: Offset(2.0,
+                            2.0), // Set the horizontal and vertical offset for the shadow
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -155,8 +165,10 @@ class _Page2 extends State<Page2> {
                                         floatingLabelAlignment:
                                             FloatingLabelAlignment.center,
                                         labelText: settingTemperatureText,
-                                        labelStyle:
-                                            const TextStyle(fontSize: 20)),
+                                        labelStyle: const TextStyle(
+                                          fontSize: 30.0,
+                                          fontWeight: FontWeight.w500,
+                                        )),
                                   ),
                                 ),
                                 const Text("C")
@@ -261,8 +273,10 @@ class _Page2 extends State<Page2> {
                                         floatingLabelAlignment:
                                             FloatingLabelAlignment.center,
                                         labelText: settingHumidityText,
-                                        labelStyle:
-                                            const TextStyle(fontSize: 20)),
+                                        labelStyle: const TextStyle(
+                                          fontSize: 30.0,
+                                          fontWeight: FontWeight.w500,
+                                        )),
                                   ),
                                 ),
                                 const Text("%.")
