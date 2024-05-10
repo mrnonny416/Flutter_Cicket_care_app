@@ -235,7 +235,11 @@ class _SignInScreenState extends State<SignUpScreen> {
                                         'food_control': {
                                           'control': false,
                                           'sensor': 0,
-                                          'setting': 0
+                                          'setting': 0,
+                                          'schedule': {
+                                            'case1': "8:00",
+                                            'case2': "18:00"
+                                          }
                                         },
                                         'water_control': {
                                           'control': false,
