@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
-
+import 'dart:developer' as developer;
 // import 'dart:developer' as developer;
 
 final TextEditingController waterController = TextEditingController();
@@ -21,8 +21,10 @@ class _Page1 extends State<Page1> {
   String lowText = "ใกล้หมด";
   String settingWaterText = 'Loading..';
   String settingFoodText = 'Loading..';
-  DateTime selectedDate1 = DateTime.now();
-  DateTime selectedDate2 = DateTime.now();
+  TimeOfDay selectedTime1 = TimeOfDay.now();
+  TimeOfDay selectedTime2 = TimeOfDay.now();
+  String selectedTime1Text = "";
+  String selectedTime2Text = "";
 
   @override
   void initState() {
@@ -43,6 +45,44 @@ class _Page1 extends State<Page1> {
       final String settingFoodValue = event.snapshot.value.toString();
       setState(() {
         settingFoodText = settingFoodValue;
+      });
+    });
+    databaseReference
+        .child('${widget.username}/controller/food_control/schedule/case1')
+        .onValue
+        .listen((event) {
+      final String timeSelect = event.snapshot.value.toString();
+
+      final splitText = timeSelect.split(':');
+      setState(() {
+        if (splitText.length == 2) {
+          final hour = int.parse(splitText[0]);
+          final minute = int.parse(splitText[1]);
+          selectedTime1 = TimeOfDay(hour: hour, minute: minute);
+        } else {
+          selectedTime1 = const TimeOfDay(hour: 0, minute: 0);
+        }
+        selectedTime1Text =
+            "${selectedTime1.hour.toString()}:${selectedTime1.minute.toString()}";
+      });
+    });
+    databaseReference
+        .child('${widget.username}/controller/food_control/schedule/case2')
+        .onValue
+        .listen((event) {
+      final String timeSelect = event.snapshot.value.toString();
+      final splitText = timeSelect.split(':');
+      setState(() {
+        if (splitText.length == 2) {
+          final hour = int.parse(splitText[0]);
+          final minute = int.parse(splitText[1]);
+
+          selectedTime2 = TimeOfDay(hour: hour, minute: minute);
+        } else {
+          selectedTime2 = const TimeOfDay(hour: 0, minute: 0);
+        }
+        selectedTime2Text =
+            "${selectedTime2.hour.toString()}:${selectedTime2.minute.toString()}";
       });
     });
   }
@@ -425,6 +465,22 @@ class _Page1 extends State<Page1> {
                               )
                             ],
                           ),
+                          Text("เวลาทำงานครั้งแรก ⏲️$selectedTime1Text"),
+                          ElevatedButton(
+                            onPressed: () {
+                              _selectTime1(context);
+                            },
+                            child: Text(
+                                "${selectedTime1.hour}:${selectedTime1.minute}"),
+                          ),
+                          Text("เวลาทำงานครั้งที่สอง ⏲️$selectedTime2Text"),
+                          ElevatedButton(
+                            onPressed: () {
+                              _selectTime2(context);
+                            },
+                            child: Text(
+                                "${selectedTime2.hour}:${selectedTime2.minute}"),
+                          ),
                           ElevatedButton.icon(
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.blue,
@@ -448,6 +504,15 @@ class _Page1 extends State<Page1> {
                                     })
                                   : "";
                               foodController.clear();
+                              await databaseReference
+                                  .child(
+                                      '${widget.username}/controller/food_control/schedule')
+                                  .update({
+                                'case1':
+                                    "${selectedTime1.hour.toString()}:${selectedTime1.minute.toString()}",
+                                'case2':
+                                    "${selectedTime2.hour.toString()}:${selectedTime2.minute.toString()}"
+                              });
                             },
                             icon: const Icon(Icons.cloud_upload_outlined,
                                 size: 30),
@@ -463,5 +528,43 @@ class _Page1 extends State<Page1> {
             ],
           ),
         )));
+  }
+
+  Future<void> _selectTime1(BuildContext context) async {
+    final TimeOfDay? pickedTime = await showTimePicker(
+      context: context,
+      initialTime: selectedTime1,
+      builder: (BuildContext context, Widget? child) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: false),
+          child: child ?? Container(),
+        );
+      },
+    );
+
+    if (pickedTime != null && pickedTime != selectedTime1) {
+      setState(() {
+        selectedTime1 = pickedTime;
+      });
+    }
+  }
+
+  Future<void> _selectTime2(BuildContext context) async {
+    final TimeOfDay? pickedTime = await showTimePicker(
+      context: context,
+      initialTime: selectedTime2,
+      builder: (BuildContext context, Widget? child) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: false),
+          child: child ?? Container(),
+        );
+      },
+    );
+
+    if (pickedTime != null && pickedTime != selectedTime2) {
+      setState(() {
+        selectedTime2 = pickedTime;
+      });
+    }
   }
 }
