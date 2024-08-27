@@ -3,6 +3,7 @@ import 'package:bottom_picker/resources/arrays.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // เพิ่มการนำเข้า shared_preferences
 
 class Page4 extends StatefulWidget {
   final String username;
@@ -19,19 +20,59 @@ class _Page4 extends State<Page4> {
   int foodReportCount = 0;
   int tempReportCount = 0;
   int humidityReportCount = 0;
+
   @override
   void initState() {
     super.initState();
+    _loadSelectedDate(); // โหลดค่า selectedDate เมื่อเริ่มต้น
+    _loadReportCounts(); // โหลดค่าของตัวแปร waterReportCount, foodReportCount, tempReportCount, humidityReportCount เมื่อเริ่มต้น
+  }
+
+  // ฟังก์ชันสำหรับบันทึก selectedDate
+  Future<void> _saveSelectedDate() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('selectedDate', selectedDate.toIso8601String());
+  }
+
+  // ฟังก์ชันสำหรับโหลด selectedDate
+  Future<void> _loadSelectedDate() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? dateString = prefs.getString('selectedDate');
+    if (dateString != null) {
+      setState(() {
+        selectedDate = DateTime.parse(dateString);
+      });
+    }
+  }
+
+  // ฟังก์ชันสำหรับบันทึกค่า report counts
+  Future<void> _saveReportCounts() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt('waterReportCount', waterReportCount);
+    prefs.setInt('foodReportCount', foodReportCount);
+    prefs.setInt('tempReportCount', tempReportCount);
+    prefs.setInt('humidityReportCount', humidityReportCount);
+  }
+
+  // ฟังก์ชันสำหรับโหลดค่า report counts
+  Future<void> _loadReportCounts() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      waterReportCount = prefs.getInt('waterReportCount') ?? 0;
+      foodReportCount = prefs.getInt('foodReportCount') ?? 0;
+      tempReportCount = prefs.getInt('tempReportCount') ?? 0;
+      humidityReportCount = prefs.getInt('humidityReportCount') ?? 0;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
     return Scaffold(
-        resizeToAvoidBottomInset: false,
-        backgroundColor: Colors.transparent,
-        body: Center(
-            child: Container(
+      resizeToAvoidBottomInset: false,
+      backgroundColor: Colors.transparent,
+      body: Center(
+        child: Container(
           padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
           width: screenSize.width * 0.9,
           height: screenSize.height * 0.8,
@@ -50,12 +91,9 @@ class _Page4 extends State<Page4> {
                   color: Color.fromARGB(255, 255, 255, 255),
                   shadows: [
                     Shadow(
-                      color: Color.fromARGB(
-                          255, 0, 68, 255), // Choose the color of the shadow
-                      blurRadius:
-                          2.0, // Adjust the blur radius for the shadow effect
-                      offset: Offset(2.0,
-                          2.0), // Set the horizontal and vertical offset for the shadow
+                      color: Color.fromARGB(255, 0, 68, 255),
+                      blurRadius: 2.0,
+                      offset: Offset(2.0, 2.0),
                     ),
                   ],
                 ),
@@ -185,7 +223,9 @@ class _Page4 extends State<Page4> {
               )
             ],
           ),
-        )));
+        ),
+      ),
+    );
   }
 
   void _buildDatePicker(BuildContext context) {
@@ -218,6 +258,7 @@ class _Page4 extends State<Page4> {
         });
         setState(() {
           selectedDate = index;
+          _saveSelectedDate(); // บันทึก selectedDate เมื่อเลือกวันที่ใหม่
 
           String path =
               "${widget.username}/controller/report/${selectedDate.year}/${selectedDate.month}/${selectedDate.day}";
@@ -257,6 +298,7 @@ class _Page4 extends State<Page4> {
                 tempReportCount = tempCount;
                 humidityReportCount = humidityCount;
               });
+              _saveReportCounts(); // บันทึกค่า report counts ใหม่
             } else {
               setState(() {
                 waterReportCount = 0;
@@ -264,6 +306,7 @@ class _Page4 extends State<Page4> {
                 tempReportCount = 0;
                 humidityReportCount = 0;
               });
+              _saveReportCounts(); // บันทึกค่า report counts ใหม่
             }
           });
         });
